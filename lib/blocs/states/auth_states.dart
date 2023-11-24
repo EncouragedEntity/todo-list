@@ -17,3 +17,5 @@ class AuthFailureState extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+
+class AuthLoadingState extends AuthState {}

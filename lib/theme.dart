@@ -8,6 +8,11 @@ final appTheme = ThemeData(
       fontWeight: FontWeight.w600,
       fontSize: 14,
     ),
+    bodyMedium: GoogleFonts.poppins(
+      color: Colors.white,
+      fontSize: 16,
+      fontWeight: FontWeight.w300,
+    ),
     bodyLarge: GoogleFonts.openSans(
       color: Colors.grey,
       fontSize: 16,
@@ -29,6 +34,6 @@ final appTheme = ThemeData(
     ),
   ),
   scaffoldBackgroundColor: const Color(0xFFe3e4f8),
-  primaryColor: const Color(0xFF8a8df5),
+  primaryColor: const Color(0xFF9FA1F7),
   highlightColor: const Color(0xFF6600FF),
 );

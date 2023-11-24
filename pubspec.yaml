@@ -43,6 +43,12 @@ dependencies:
   logger: ^2.0.2+1
   flutter_session_manager: ^1.0.3
   json_serializable: ^6.7.1
+  ionicons: ^0.2.2
+  json_annotation: ^4.8.1
+  build_runner: ^2.4.6
+  uuid: ^4.2.1
+  intl: ^0.18.1
+  grouped_list: ^5.1.2
 
 dev_dependencies:
   flutter_test:

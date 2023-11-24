@@ -5,23 +5,23 @@ class UserRepository {
 
   UserRepository(this.authProvider);
 
-  Future<void> changePassword(String oldPassword, String newPassword) async {
-    await authProvider.changePassword(oldPassword, newPassword);
+  Future<bool> changePassword(String oldPassword, String newPassword) async {
+    return await authProvider.changePassword(oldPassword, newPassword);
   }
 
-  Future<void> deleteAccount() async {
-    await authProvider.deleteAccount();
+  Future<bool> deleteAccount() async {
+    return await authProvider.deleteAccount();
   }
 
-  Future<void> logIn(String email, String password) async {
-    await authProvider.logIn(email, password);
+  Future<bool> logIn(String email, String password) async {
+    return await authProvider.logIn(email, password);
   }
 
-  Future<void> logOut() async {
-    await authProvider.logOut();
+  Future<bool> logOut() async {
+    return await authProvider.logOut();
   }
 
-  Future<void> signUp(String email, String password) async {
-    await authProvider.signUp(email, password);
+  Future<bool> signUp(String email, String password) async {
+    return await authProvider.signUp(email, password);
   }
 }

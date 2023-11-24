@@ -1,7 +1,7 @@
 abstract class AuthProvider {
-  Future<void> logIn(String email, String password);
-  Future<void> signUp(String email, String password);
-  Future<void> logOut();
-  Future<void> changePassword(String oldPassword, String newPassword);
-  Future<void> deleteAccount();
+  Future<bool> logIn(String email, String password);
+  Future<bool> signUp(String email, String password);
+  Future<bool> logOut();
+  Future<bool> changePassword(String oldPassword, String newPassword);
+  Future<bool> deleteAccount();
 }
