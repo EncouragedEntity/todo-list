@@ -48,8 +48,12 @@ class _NewTodoItemModalSheetState extends State<NewTodoItemModalSheet> {
                 children: [
                   Expanded(
                     child: TextField(
+                      style: Theme.of(context).textTheme.bodySmall,
                       autofocus: true,
                       controller: _titleController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
                     ),
                   ),
                   IconButton(

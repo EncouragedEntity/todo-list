@@ -72,7 +72,15 @@ class _TodoItemListState extends State<TodoItemList> {
                       ],
                     );
                   } else {
-                    return Container();
+                    return Center(
+                      child: Text(
+                        'Empty here :)',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(color: Colors.grey),
+                      ),
+                    );
                   }
                 },
               ),
@@ -89,8 +97,8 @@ class _TodoItemListState extends State<TodoItemList> {
   List<Map<String, dynamic>> _groupItemsByDate(List<TodoItem> items) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
-    final thisWeek = today.add(const Duration(days: 7));
+    final todayPlusDay = today.add(const Duration(days: 1));
+    final tomorrow = now.copyWith(day: now.day + 1);
 
     final List<Map<String, dynamic>> groupedItems = [];
 
@@ -98,21 +106,26 @@ class _TodoItemListState extends State<TodoItemList> {
       'group': 'Today',
       'items': items
           .where((item) =>
-              item.dueDate.isBefore(tomorrow) && item.dueDate.isAfter(today))
+              item.dueDate.isBefore(todayPlusDay) &&
+              item.dueDate.isAfter(today))
           .toList(),
     });
+
+    final tomorrowItems =
+        items.where((item) => item.dueDate.day == tomorrow.day).toList();
 
     groupedItems.add({
       'group': 'Tomorrow',
-      'items': items.where((item) => item.dueDate.day == tomorrow.day).toList(),
+      'items': tomorrowItems,
     });
+
+    final thisWeekItems = items.where((item) {
+      return item.dueDate.isAfter(tomorrow);
+    }).toList();
 
     groupedItems.add({
       'group': 'This Week',
-      'items': items
-          .where((item) =>
-              item.dueDate.isAfter(tomorrow) && item.dueDate.isBefore(thisWeek))
-          .toList(),
+      'items': thisWeekItems,
     });
 
     return groupedItems;

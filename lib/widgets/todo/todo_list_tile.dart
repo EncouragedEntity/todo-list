@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
+import 'package:todo_list/blocs/todo_bloc.dart';
 import 'package:todo_list/models/todo_item.dart';
 
+import '../../blocs/events/todo_event.dart';
 import 'todo_label_chip.dart';
 
 class TodoItemListTile extends StatefulWidget {
@@ -44,6 +47,7 @@ class _TodoItemListTileState extends State<TodoItemListTile> {
       ),
       confirmDismiss: (DismissDirection direction) async {
         if (direction == DismissDirection.endToStart) {
+          context.read<TodoBloc>().add(TodoRemoveItemEvent(widget.item));
           return true;
         }
         return false;
@@ -77,10 +81,11 @@ class _TodoItemListTileState extends State<TodoItemListTile> {
                     color: Theme.of(context).highlightColor,
                     width: 2,
                   ),
-                  value: isChecked,
+                  value: widget.item.isDone,
                   onChanged: (bool? newValue) {
                     setState(() {
                       isChecked = newValue ?? false;
+                      widget.item.isDone = isChecked;
                     });
                   },
                 ),
