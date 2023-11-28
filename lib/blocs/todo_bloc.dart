@@ -5,22 +5,29 @@ import 'package:todo_list/providers/todo/todo_mock_provider.dart';
 import 'package:todo_list/repositories/todo_repository.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  final mockProvider = TodoMockProvider();
+  //TODO Change to normal provider
+  final repository = TodoRepository(TodoMockProvider());
 
   TodoBloc() : super(TodoLoadingState()) {
     on<TodoLoadAllItemsEvent>((event, emit) async {
       emit(TodoLoadingState());
-      final itemList = await TodoRepository(mockProvider)
-          .getAll(); //TODO Change to normal provider
+      final itemList = await repository.getAll();
       emit(TodoItemsLoadedState(itemList));
     });
 
     on<TodoAddNewItemEvent>((event, emit) async {
       emit(TodoLoadingState());
       final newItem = event.item;
-      await TodoRepository(mockProvider).create(newItem);
-      final itemList = await TodoRepository(mockProvider).getAll();
+      await repository.create(newItem);
+      final itemList = await repository.getAll();
       emit(TodoItemsLoadedState(itemList));
+    });
+
+    on<TodoRemoveItemEvent>((event, emit) async {
+      final itemToRemove = event.item;
+      if (itemToRemove.id != null) {
+        await repository.delete(itemToRemove.id!);
+      }
     });
   }
 }
