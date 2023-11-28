@@ -13,6 +13,10 @@ class NewTodoItemModalSheet extends StatefulWidget {
 
 class _NewTodoItemModalSheetState extends State<NewTodoItemModalSheet> {
   final TextEditingController _titleController = TextEditingController();
+  final item = TodoItem(
+      title: "New task",
+      status: "To do",
+      dueDate: DateTime.now().add(const Duration(days: 1)));
 
   @override
   void dispose() {
@@ -73,7 +77,16 @@ class _NewTodoItemModalSheetState extends State<NewTodoItemModalSheet> {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final chosenDate = await showDatePicker(
+                            context: context,
+                            firstDate: DateTime.now(),
+                            lastDate:
+                                DateTime.now().add(const Duration(days: 365)),
+                          );
+                          item.dueDate = chosenDate ??
+                              DateTime.now().add(const Duration(days: 1));
+                        },
                         icon: Icon(
                           Ionicons.calendar_number_outline,
                           color: Theme.of(context).highlightColor,
@@ -111,10 +124,8 @@ class _NewTodoItemModalSheetState extends State<NewTodoItemModalSheet> {
                           const MaterialStatePropertyAll(Size.fromRadius(26)),
                     ),
                     onPressed: () {
-                      final item = TodoItem(
-                          title: _titleController.text,
-                          status: "To do",
-                          dueDate: DateTime.now().add(const Duration(days: 1)));
+                      item.title = _titleController.text;
+
                       Navigator.of(context).pop(item);
                     },
                     icon: const Icon(Ionicons.arrow_up),
