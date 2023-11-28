@@ -9,18 +9,12 @@ class TodoItem {
   String title;
   bool isDone;
   DateTime dueDate;
-  String? project; //TODO change to model
-  String? label; //TODO change to model
-  String? status; //TODO change to model
   TodoPriority? priority;
 
   TodoItem({
     String? id,
     required this.title,
-    required this.status,
     this.isDone = false,
-    this.label,
-    this.project,
     this.priority,
     required this.dueDate,
   }) {

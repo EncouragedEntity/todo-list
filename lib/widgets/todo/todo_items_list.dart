@@ -8,9 +8,12 @@ import 'package:todo_list/blocs/todo_bloc.dart';
 import 'package:todo_list/widgets/todo/todo_list_tile.dart';
 
 import '../../models/todo_item.dart';
+import '../../models/todo_priority.dart';
 
 class TodoItemList extends StatefulWidget {
-  const TodoItemList({super.key});
+  const TodoItemList({super.key, this.groupByPriority = false});
+
+  final bool groupByPriority;
 
   @override
   State<TodoItemList> createState() => _TodoItemListState();
@@ -29,7 +32,9 @@ class _TodoItemListState extends State<TodoItemList> {
         }
         if (todoState is TodoItemsLoadedState) {
           Logger().i(todoState.items);
-          final groupedItems = _groupItemsByDate(todoState.items);
+          final groupedItems = widget.groupByPriority
+              ? _groupItemsByPriority(todoState.items)
+              : _groupItemsByDate(todoState.items);
 
           return Padding(
             padding: const EdgeInsets.all(10),
@@ -37,7 +42,7 @@ class _TodoItemListState extends State<TodoItemList> {
               onRefresh: () async {
                 context.read<TodoBloc>().add(TodoLoadAllItemsEvent());
               },
-              child: GroupedListView<dynamic, String>(
+              child: GroupedListView<dynamic, dynamic>(
                 elements: groupedItems,
                 groupBy: (element) => element['group'],
                 groupComparator: (value1, value2) {
@@ -48,13 +53,18 @@ class _TodoItemListState extends State<TodoItemList> {
                   }
                   return value2.compareTo(value1);
                 },
-                itemComparator: (item1, item2) =>
-                    item1['dueDate'].compareTo(item2['dueDate']),
+                itemComparator: (item1, item2) {
+                  if (widget.groupByPriority) {
+                    return item1['priority'].compareTo(item2['priority']);
+                  } else {
+                    return item1['dueDate'].compareTo(item2['dueDate']);
+                  }
+                },
                 order: GroupedListOrder.ASC,
-                groupSeparatorBuilder: (String value) => Padding(
+                groupSeparatorBuilder: (dynamic value) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    value,
+                    value.toString(),
                     style: Theme.of(context)
                         .textTheme
                         .displayMedium!
@@ -106,8 +116,9 @@ class _TodoItemListState extends State<TodoItemList> {
       'group': 'Today',
       'items': items
           .where((item) =>
-              item.dueDate.isBefore(todayPlusDay) &&
-              item.dueDate.isAfter(today))
+              item.dueDate.isAtSameMomentAs(today) ||
+              item.dueDate.isAfter(today) &&
+                  item.dueDate.isBefore(todayPlusDay))
           .toList(),
     });
 
@@ -126,6 +137,30 @@ class _TodoItemListState extends State<TodoItemList> {
     groupedItems.add({
       'group': 'This Week',
       'items': thisWeekItems,
+    });
+
+    return groupedItems;
+  }
+
+  List<Map<String, dynamic>> _groupItemsByPriority(List<TodoItem> items) {
+    final List<Map<String, dynamic>> groupedItems = [];
+
+    groupedItems.add({
+      'group': 'High Priority',
+      'items':
+          items.where((item) => item.priority == TodoPriority.high).toList(),
+    });
+
+    groupedItems.add({
+      'group': 'Medium Priority',
+      'items':
+          items.where((item) => item.priority == TodoPriority.medium).toList(),
+    });
+
+    groupedItems.add({
+      'group': 'Low Priority',
+      'items':
+          items.where((item) => item.priority == TodoPriority.low).toList(),
     });
 
     return groupedItems;

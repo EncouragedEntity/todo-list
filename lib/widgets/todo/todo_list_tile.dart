@@ -6,7 +6,6 @@ import 'package:todo_list/blocs/todo_bloc.dart';
 import 'package:todo_list/models/todo_item.dart';
 
 import '../../blocs/events/todo_event.dart';
-import 'todo_label_chip.dart';
 
 class TodoItemListTile extends StatefulWidget {
   const TodoItemListTile({super.key, required this.item});
@@ -105,21 +104,6 @@ class _TodoItemListTileState extends State<TodoItemListTile> {
                   fontSize: 12,
                 ),
               ),
-              trailing: widget.item.label != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 12, right: 12),
-                      child: Wrap(
-                        children: [
-                          TodoLabelChip(
-                            color: isChecked
-                                ? const Color(0xFFF2A820).withOpacity(0.5)
-                                : const Color(0xFFF2A820),
-                            text: widget.item.label!,
-                          ),
-                        ],
-                      ),
-                    )
-                  : null,
             ),
           ),
         ),

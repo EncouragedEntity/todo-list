@@ -46,63 +46,47 @@ class TodoMockProvider extends TodoProvider {
   final List<TodoItem> _todoItems = [
     TodoItem(
       title: 'Complete Flutter project',
-      status: 'In Progress',
       dueDate: DateTime.now(),
       priority: TodoPriority.high,
     ),
     TodoItem(
       title: 'Read a book',
-      status: 'To Do',
       dueDate: DateTime.now().add(const Duration(days: 1)),
-      label: 'Personal',
     ),
     TodoItem(
       title: 'Write blog post',
-      status: 'To Do',
       dueDate: DateTime.now().add(const Duration(days: 2)),
-      project: 'Blogging',
     ),
     TodoItem(
       title: 'Exercise',
-      status: 'In Progress',
       dueDate: DateTime.now().add(const Duration(days: 3)),
       priority: TodoPriority.medium,
-      label: 'Health',
     ),
     TodoItem(
       title: 'Learn a new programming language',
-      status: 'To Do',
       dueDate: DateTime.now().add(const Duration(days: 1)),
     ),
     TodoItem(
       title: 'Attend team meeting',
-      status: 'In Progress',
       dueDate: DateTime.now().add(const Duration(days: 4)),
-      project: 'Work',
     ),
     TodoItem(
       title: 'Prepare for exam',
-      status: 'To Do',
       dueDate: DateTime.now().add(const Duration(days: 6)),
       priority: TodoPriority.low,
     ),
     TodoItem(
       title: 'Cook a new recipe',
-      status: 'In Progress',
       dueDate: DateTime.now().add(const Duration(days: 2)),
-      label: 'Cooking',
     ),
     TodoItem(
       title: 'Plan weekend getaway',
-      status: 'To Do',
       dueDate: DateTime.now().add(const Duration(days: 8)),
     ),
     TodoItem(
       title: 'Complete GPT-3 tutorial',
-      status: 'In Progress',
       dueDate: DateTime.now(),
       priority: TodoPriority.high,
-      project: 'Learning',
     ),
   ];
 }
