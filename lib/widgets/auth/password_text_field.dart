@@ -6,9 +6,11 @@ class PasswordTextField extends StatefulWidget {
     super.key,
     required this.controller,
     required this.showForgotLable,
+    required this.onForgotPassword,
   });
   final TextEditingController controller;
   final bool showForgotLable;
+  final void Function() onForgotPassword;
 
   @override
   State<PasswordTextField> createState() => _PasswordTextFieldState();
@@ -32,7 +34,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           ),
           if (widget.showForgotLable)
             TextButton(
-              onPressed: () {},
+              onPressed: widget.onForgotPassword,
               child: Text(
                 'Forgot password?',
                 style: Theme.of(context).textTheme.displaySmall,

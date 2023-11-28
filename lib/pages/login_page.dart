@@ -7,6 +7,8 @@ import 'package:todo_list/widgets/auth/email_text_field.dart';
 import 'package:todo_list/widgets/auth/login_button.dart';
 import 'package:todo_list/widgets/auth/password_text_field.dart';
 
+import '../services/mailtrap_client.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -46,6 +48,11 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void forgotPassword() {
+    MailTrapClient().sendForgotPasswordLetter(
+        "example@gmail.com", 'https://example.com/reset');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                         PasswordTextField(
                           controller: _passwordController,
                           showForgotLable: isLoginMode,
+                          onForgotPassword: forgotPassword,
                         ),
                       ],
                     ),

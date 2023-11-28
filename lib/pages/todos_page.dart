@@ -105,6 +105,7 @@ class TodosPage extends StatelessWidget {
                   );
 
                   if (item != null) {
+                    // ignore: use_build_context_synchronously
                     context.read<TodoBloc>().add(TodoAddNewItemEvent(item));
                   }
                 },
