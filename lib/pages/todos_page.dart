@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_list/blocs/events/todo_event.dart';
 import 'package:todo_list/blocs/todo_bloc.dart';
 import 'package:todo_list/models/todo_item.dart';
 
 import '../blocs/states/todo_state.dart';
+import '../widgets/todo/grouping_dialog.dart';
 import '../widgets/todo/new_item_modal_sheet.dart';
 import '../widgets/todo/todo_items_list.dart';
 
@@ -18,13 +20,12 @@ class TodosPage extends StatefulWidget {
 }
 
 class _TodosPageState extends State<TodosPage> {
-  bool _groupByPriority = false;
-
+  bool groupByPriority = false;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<TodoBloc>(
+    return Provider<TodoBloc>(
       create: (ctx) => TodoBloc(),
-      child: SafeArea(
+      builder: (ctx, child) => SafeArea(
         child: BlocBuilder<TodoBloc, TodoState>(
           builder: (context, state) {
             return Scaffold(
@@ -60,109 +61,17 @@ class _TodosPageState extends State<TodosPage> {
                       fixedSize:
                           const MaterialStatePropertyAll(Size.fromRadius(26)),
                     ),
-                    onPressed: () {
-                      showDialog(
+                    onPressed: () async {
+                      final result = await showDialog<bool>(
                         context: context,
                         builder: (ctx) {
-                          return Material(
-                            color: Colors.transparent,
-                            child: Center(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16.0),
-                                child: Container(
-                                  width: 300,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                      horizontal: 4,
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const SizedBox(
-                                              width: 36,
-                                            ),
-                                            Text(
-                                              "Sort by",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium!
-                                                  .copyWith(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                            ),
-                                            IconButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              icon: const Icon(Icons.close,
-                                                  color: Colors.grey),
-                                            ),
-                                          ],
-                                        ),
-                                        ListTile(
-                                          leading: Icon(
-                                            Ionicons.calendar_number_outline,
-                                            color: Theme.of(context)
-                                                .highlightColor,
-                                          ),
-                                          title: const Text('Due Date'),
-                                          trailing: Radio(
-                                            fillColor: MaterialStatePropertyAll(
-                                                Theme.of(context)
-                                                    .highlightColor),
-                                            value: false,
-                                            groupValue: _groupByPriority,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _groupByPriority =
-                                                    value as bool;
-                                              });
-                                              Navigator.pop(ctx);
-                                            },
-                                          ),
-                                        ),
-                                        ListTile(
-                                          leading: Icon(
-                                            Ionicons.warning_outline,
-                                            color: Theme.of(context)
-                                                .highlightColor,
-                                          ),
-                                          title: const Text('Priority'),
-                                          trailing: Radio(
-                                            fillColor: MaterialStatePropertyAll(
-                                                Theme.of(context)
-                                                    .highlightColor),
-                                            value: true,
-                                            groupValue: _groupByPriority,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _groupByPriority =
-                                                    value as bool;
-                                              });
-                                              Navigator.pop(ctx);
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
+                          return GroupingDialog(groupByPriority);
                         },
                       );
+
+                      setState(() {
+                        groupByPriority = result ?? false;
+                      });
                     },
                     icon: const Icon(
                       Ionicons.ellipsis_horizontal_outline,
@@ -215,6 +124,7 @@ class _TodosPageState extends State<TodosPage> {
                   );
 
                   if (item != null) {
+                    // ignore: use_build_context_synchronously
                     context.read<TodoBloc>().add(TodoAddNewItemEvent(item));
                   }
                 },
@@ -226,7 +136,9 @@ class _TodosPageState extends State<TodosPage> {
               ),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
-              body: const TodoItemList(),
+              body: TodoItemList(
+                groupByPriority: groupByPriority,
+              ),
               bottomNavigationBar: BottomNavigationBar(
                 items: const [
                   BottomNavigationBarItem(

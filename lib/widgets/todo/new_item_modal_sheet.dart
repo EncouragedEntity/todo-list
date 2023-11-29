@@ -108,10 +108,10 @@ class _NewTodoItemModalSheetState extends State<NewTodoItemModalSheet> {
                         ],
                         onChanged: (value) {
                           setState(() {
-                            item.priority = value;
+                            item.priority = value ?? TodoPriority.medium;
                           });
                         },
-                        value: item.priority ?? TodoPriority.low,
+                        value: item.priority,
                         icon: Icon(
                           Ionicons.warning_outline,
                           color: Theme.of(context).highlightColor,

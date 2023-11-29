@@ -50,6 +50,7 @@ dependencies:
   intl: ^0.18.1
   grouped_list: ^5.1.2
   mailer: ^6.0.1
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:

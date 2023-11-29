@@ -11,7 +11,8 @@ import '../../models/todo_item.dart';
 import '../../models/todo_priority.dart';
 
 class TodoItemList extends StatefulWidget {
-  const TodoItemList({super.key, this.groupByPriority = false});
+  const TodoItemList({Key? key, this.groupByPriority = false})
+      : super(key: key);
 
   final bool groupByPriority;
 
@@ -22,7 +23,9 @@ class TodoItemList extends StatefulWidget {
 class _TodoItemListState extends State<TodoItemList> {
   @override
   Widget build(BuildContext context) {
-    context.read<TodoBloc>().add(TodoLoadAllItemsEvent());
+    if (context.watch<TodoBloc>().state is! TodoItemsLoadedState) {
+      context.read<TodoBloc>().add(TodoLoadAllItemsEvent());
+    }
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (todoCtx, todoState) {
         if (todoState is TodoLoadingState) {
@@ -45,22 +48,32 @@ class _TodoItemListState extends State<TodoItemList> {
               child: GroupedListView<dynamic, dynamic>(
                 elements: groupedItems,
                 groupBy: (element) => element['group'],
-                groupComparator: (value1, value2) {
-                  if (value1 == 'Today') {
-                    return -1;
-                  } else if (value2 == 'Today') {
-                    return 1;
-                  }
-                  return value2.compareTo(value1);
+                groupComparator: (group1, group2) {
+                  final priorityOrder = [
+                    'High Priority',
+                    'Medium Priority',
+                    'Low Priority'
+                  ];
+                  final index1 = priorityOrder.indexOf(group1);
+                  final index2 = priorityOrder.indexOf(group2);
+                  return index1.compareTo(index2);
                 },
                 itemComparator: (item1, item2) {
                   if (widget.groupByPriority) {
                     return item1['priority'].compareTo(item2['priority']);
                   } else {
-                    return item1['dueDate'].compareTo(item2['dueDate']);
+                    final dueDate1 = item1['dueDate'] as DateTime?;
+                    final dueDate2 = item2['dueDate'] as DateTime?;
+
+                    if (dueDate1 != null && dueDate2 != null) {
+                      return dueDate1.compareTo(dueDate2);
+                    } else if (dueDate1 == null && dueDate2 == null) {
+                      return 0;
+                    } else {
+                      return dueDate1 != null ? 1 : -1;
+                    }
                   }
                 },
-                order: GroupedListOrder.ASC,
                 groupSeparatorBuilder: (dynamic value) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
@@ -98,7 +111,7 @@ class _TodoItemListState extends State<TodoItemList> {
           );
         }
         return const Center(
-          child: Text("Something's wrong"),
+          child: CircularProgressIndicator(),
         );
       },
     );
@@ -146,9 +159,9 @@ class _TodoItemListState extends State<TodoItemList> {
     final List<Map<String, dynamic>> groupedItems = [];
 
     groupedItems.add({
-      'group': 'High Priority',
+      'group': 'Low Priority',
       'items':
-          items.where((item) => item.priority == TodoPriority.high).toList(),
+          items.where((item) => item.priority == TodoPriority.low).toList(),
     });
 
     groupedItems.add({
@@ -158,9 +171,9 @@ class _TodoItemListState extends State<TodoItemList> {
     });
 
     groupedItems.add({
-      'group': 'Low Priority',
+      'group': 'High Priority',
       'items':
-          items.where((item) => item.priority == TodoPriority.low).toList(),
+          items.where((item) => item.priority == TodoPriority.high).toList(),
     });
 
     return groupedItems;

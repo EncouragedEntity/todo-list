@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
             message: 'Failed to log in, try again.\n${state.message}',
           );
         }
-        return const ErrorPage(message: "Something's wrong...");
+        return const LoadingPage();
       },
     );
   }

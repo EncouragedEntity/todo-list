@@ -9,13 +9,13 @@ class TodoItem {
   String title;
   bool isDone;
   DateTime dueDate;
-  TodoPriority? priority;
+  TodoPriority priority;
 
   TodoItem({
     String? id,
     required this.title,
     this.isDone = false,
-    this.priority,
+    this.priority = TodoPriority.medium,
     required this.dueDate,
   }) {
     if (id == null) {

@@ -17,10 +17,10 @@ void main() {
       theme: appTheme,
       home: MultiBlocProvider(
         providers: [
-          BlocProvider(
+          BlocProvider<AuthBloc>(
             create: (BuildContext ctx) => AuthBloc(),
           ),
-          BlocProvider(
+          BlocProvider<TodoBloc>(
             create: (BuildContext ctx) => TodoBloc(),
           ),
         ],

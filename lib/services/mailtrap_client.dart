@@ -33,6 +33,8 @@ class MailTrapClient {
       for (var p in e.problems) {
         Logger().e('Problem: ${p.code}: ${p.msg}');
       }
+    } on Exception catch (e) {
+      Logger().e('Forgot Password email not sent. $e');
     }
   }
 }
