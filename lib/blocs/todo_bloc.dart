@@ -23,6 +23,14 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       emit(TodoItemsLoadedState(itemList));
     });
 
+    on<TodoUpdateItemEvent>((event, emit) async {
+      final item = event.item;
+      emit(TodoLoadingState());
+      await repository.update(item.id!, item);
+      final itemList = await repository.getAll();
+      emit(TodoItemsLoadedState(itemList));
+    });
+
     on<TodoRemoveItemEvent>((event, emit) async {
       final itemToRemove = event.item;
       if (itemToRemove.id != null) {

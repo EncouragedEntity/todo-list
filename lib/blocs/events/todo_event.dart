@@ -17,6 +17,15 @@ class TodoAddNewItemEvent extends TodoEvent {
   List<Object> get props => [item];
 }
 
+class TodoUpdateItemEvent extends TodoEvent {
+  final TodoItem item;
+
+  TodoUpdateItemEvent(this.item);
+
+  @override
+  List<Object> get props => [item];
+}
+
 class TodoRemoveItemEvent extends TodoEvent {
   final TodoItem item;
 

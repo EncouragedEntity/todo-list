@@ -3,21 +3,45 @@ import 'package:ionicons/ionicons.dart';
 import 'package:todo_list/models/todo_item.dart';
 import 'package:todo_list/models/todo_priority.dart';
 
-class NewTodoItemModalSheet extends StatefulWidget {
-  const NewTodoItemModalSheet({
-    Key? key,
-  }) : super(key: key);
+class ItemEditModalSheet extends StatefulWidget {
+  const ItemEditModalSheet({
+    super.key,
+    this.item,
+  });
+
+  final TodoItem? item;
 
   @override
-  State<NewTodoItemModalSheet> createState() => _NewTodoItemModalSheetState();
+  State<ItemEditModalSheet> createState() => _ItemEditModalSheetState();
 }
 
-class _NewTodoItemModalSheetState extends State<NewTodoItemModalSheet> {
+class _ItemEditModalSheetState extends State<ItemEditModalSheet> {
   final TextEditingController _titleController = TextEditingController();
-  final item = TodoItem(
-    title: "New task",
-    dueDate: DateTime.now().add(const Duration(days: 1)),
-  );
+  late final TodoItem item;
+  TodoPriority selectedPriority = TodoPriority.medium;
+  Color get currentPriorityColor {
+    switch (selectedPriority) {
+      case TodoPriority.high:
+        return Colors.red;
+      case TodoPriority.medium:
+        return Colors.orange;
+      case TodoPriority.low:
+        return Colors.green;
+      default:
+        return Colors.orange;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController.text = widget.item?.title ?? "";
+    item = widget.item ??
+        TodoItem(
+          title: "New task",
+          dueDate: DateTime.now().add(const Duration(days: 1)),
+        );
+  }
 
   @override
   void dispose() {
@@ -84,7 +108,7 @@ class _NewTodoItemModalSheetState extends State<NewTodoItemModalSheet> {
                           final chosenDate = await showDatePicker(
                             context: context,
                             firstDate: DateTime.now(),
-                            currentDate: DateTime.now(),
+                            currentDate: item.dueDate,
                             lastDate:
                                 DateTime.now().add(const Duration(days: 365)),
                           );
@@ -99,22 +123,30 @@ class _NewTodoItemModalSheetState extends State<NewTodoItemModalSheet> {
                       const SizedBox(
                         width: 20,
                       ),
-                      DropdownButton(
-                        items: [
-                          ...TodoPriority.values.map((e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(e.name),
-                              ))
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            item.priority = value ?? TodoPriority.medium;
-                          });
-                        },
-                        value: item.priority,
-                        icon: Icon(
-                          Ionicons.warning_outline,
-                          color: Theme.of(context).highlightColor,
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          selectedItemBuilder: (ctx) => [
+                            const SizedBox(
+                              width: 40,
+                            )
+                          ],
+                          items: [
+                            ...TodoPriority.values.map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e.name),
+                                ))
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              item.priority = value ?? TodoPriority.medium;
+                              selectedPriority = item.priority;
+                            });
+                          },
+                          value: item.priority,
+                          icon: Icon(
+                            Ionicons.warning_outline,
+                            color: currentPriorityColor,
+                          ),
                         ),
                       ),
                     ],

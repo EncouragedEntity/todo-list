@@ -9,7 +9,7 @@ import 'package:todo_list/models/todo_item.dart';
 
 import '../blocs/states/todo_state.dart';
 import '../widgets/todo/grouping_dialog.dart';
-import '../widgets/todo/new_item_modal_sheet.dart';
+import '../widgets/todo/item_edit_modal_sheet.dart';
 import '../widgets/todo/todo_items_list.dart';
 
 class TodosPage extends StatefulWidget {
@@ -112,14 +112,15 @@ class _TodosPageState extends State<TodosPage> {
               ),
               floatingActionButton: IconButton(
                 style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(
-                        Theme.of(context).highlightColor)),
+                  backgroundColor: MaterialStatePropertyAll(
+                      Theme.of(context).highlightColor),
+                ),
                 onPressed: () async {
                   TodoItem? item = await showModalBottomSheet<TodoItem>(
                     useSafeArea: true,
                     context: context,
                     builder: (ctx) {
-                      return const NewTodoItemModalSheet();
+                      return const ItemEditModalSheet();
                     },
                   );
 

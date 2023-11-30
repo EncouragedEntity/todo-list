@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
 import 'package:todo_list/blocs/todo_bloc.dart';
 import 'package:todo_list/models/todo_item.dart';
+import 'package:todo_list/widgets/todo/item_edit_modal_sheet.dart';
 
 import '../../blocs/events/todo_event.dart';
 
@@ -27,27 +28,43 @@ class _TodoItemListTileState extends State<TodoItemListTile> {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      direction: DismissDirection.endToStart,
-      background: Padding(
-        padding: const EdgeInsets.only(right: 10),
-        child: Align(
-          alignment: AlignmentDirectional.centerEnd,
-          child: IconButton.filled(
-            color: Colors.white,
-            style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.red),
+      background: const Padding(
+        padding: EdgeInsets.only(right: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+              child: Icon(
+                Ionicons.pencil_outline,
+              ),
             ),
-            onPressed: () {},
-            icon: const Icon(
-              Ionicons.trash_outline,
+            CircleAvatar(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              child: Icon(
+                Ionicons.trash_outline,
+              ),
             ),
-          ),
+          ],
         ),
       ),
       confirmDismiss: (DismissDirection direction) async {
         if (direction == DismissDirection.endToStart) {
           context.read<TodoBloc>().add(TodoRemoveItemEvent(widget.item));
           return true;
+        }
+        if (direction == DismissDirection.startToEnd) {
+          final result = await showModalBottomSheet<TodoItem>(
+              context: context,
+              builder: (ctx) {
+                return ItemEditModalSheet(item: widget.item);
+              });
+          if (result != null) {
+            // ignore: use_build_context_synchronously
+            context.read<TodoBloc>().add(TodoUpdateItemEvent(result));
+          }
         }
         return false;
       },

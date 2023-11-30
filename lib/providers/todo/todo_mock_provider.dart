@@ -52,10 +52,12 @@ class TodoMockProvider extends TodoProvider {
     TodoItem(
       title: 'Read a book',
       dueDate: DateTime.now().add(const Duration(days: 1)),
+      priority: TodoPriority.low,
     ),
     TodoItem(
       title: 'Write blog post',
       dueDate: DateTime.now().add(const Duration(days: 2)),
+      priority: TodoPriority.high,
     ),
     TodoItem(
       title: 'Exercise',
@@ -65,10 +67,12 @@ class TodoMockProvider extends TodoProvider {
     TodoItem(
       title: 'Learn a new programming language',
       dueDate: DateTime.now().add(const Duration(days: 1)),
+      priority: TodoPriority.low,
     ),
     TodoItem(
       title: 'Attend team meeting',
       dueDate: DateTime.now().add(const Duration(days: 4)),
+      priority: TodoPriority.low,
     ),
     TodoItem(
       title: 'Prepare for exam',
