@@ -26,4 +26,8 @@ class TodoItem {
   String get formattedDateDayMonth {
     return DateFormat('d MMMM').format(dueDate);
   }
+
+  String get formattedDate {
+    return DateFormat('dd.MM.yyyy').format(dueDate);
+  }
 }

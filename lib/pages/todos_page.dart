@@ -6,10 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:todo_list/blocs/events/todo_event.dart';
 import 'package:todo_list/blocs/todo_bloc.dart';
 import 'package:todo_list/models/todo_item.dart';
+import 'package:todo_list/pages/add_edit_item_page.dart';
 
 import '../blocs/states/todo_state.dart';
 import '../widgets/todo/grouping_dialog.dart';
-import '../widgets/todo/item_edit_modal_sheet.dart';
 import '../widgets/todo/todo_items_list.dart';
 
 class TodosPage extends StatefulWidget {
@@ -72,6 +72,9 @@ class _TodosPageState extends State<TodosPage> {
                       setState(() {
                         groupByPriority = result ?? false;
                       });
+
+                      // ignore: use_build_context_synchronously
+                      context.read<TodoBloc>().add(TodoLoadAllItemsEvent());
                     },
                     icon: const Icon(
                       Ionicons.ellipsis_horizontal_outline,
@@ -113,15 +116,16 @@ class _TodosPageState extends State<TodosPage> {
               floatingActionButton: IconButton(
                 style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(
-                      Theme.of(context).highlightColor),
+                    Theme.of(context).highlightColor,
+                  ),
                 ),
                 onPressed: () async {
-                  TodoItem? item = await showModalBottomSheet<TodoItem>(
-                    useSafeArea: true,
-                    context: context,
-                    builder: (ctx) {
-                      return const ItemEditModalSheet();
-                    },
+                  TodoItem? item = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) {
+                        return const AddEditItemPage();
+                      },
+                    ),
                   );
 
                   if (item != null) {

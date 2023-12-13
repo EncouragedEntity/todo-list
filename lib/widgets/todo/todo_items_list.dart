@@ -86,7 +86,6 @@ class _TodoItemListState extends State<TodoItemList> {
                 ),
                 itemBuilder: (context, element) {
                   final items = element['items'] as List<TodoItem>?;
-
                   if (items != null && items.isNotEmpty) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
@@ -94,17 +93,16 @@ class _TodoItemListState extends State<TodoItemList> {
                         ...items.map((e) => TodoItemListTile(item: e)),
                       ],
                     );
-                  } else {
-                    return Center(
-                      child: Text(
-                        'Empty here :)',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(color: Colors.grey),
-                      ),
-                    );
                   }
+                  return Center(
+                    child: Text(
+                      'Empty here :)',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: Colors.grey),
+                    ),
+                  );
                 },
               ),
             ),
