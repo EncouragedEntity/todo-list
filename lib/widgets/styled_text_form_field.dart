@@ -4,14 +4,14 @@ class StyledTextFormField extends StatelessWidget {
   const StyledTextFormField({
     super.key,
     required this.controller,
-    required this.labelText,
-    required this.validator,
+    this.labelText,
+    this.validator,
     this.obscureText = false,
     this.suffixIcon,
   });
   final TextEditingController controller;
-  final Widget labelText;
-  final String? Function(String? value) validator;
+  final Widget? labelText;
+  final String? Function(String? value)? validator;
   final bool obscureText;
   final Widget? suffixIcon;
 

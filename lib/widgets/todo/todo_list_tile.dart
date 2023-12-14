@@ -27,14 +27,18 @@ class _TodoItemListTileState extends State<TodoItemListTile> {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
+      direction: DismissDirection.endToStart,
       background: const Padding(
         padding: EdgeInsets.only(right: 10),
-        child: CircleAvatar(
-          radius: 8,
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
-          child: Icon(
-            Ionicons.trash_outline,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: CircleAvatar(
+            maxRadius: 24,
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            child: Icon(
+              Ionicons.trash_outline,
+            ),
           ),
         ),
       ),
