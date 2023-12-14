@@ -11,7 +11,8 @@ class MailTrapClient {
     password: "d04a3399eabc6d",
   );
 
-  void sendForgotPasswordLetter(String userEmail, String resetLink) async {
+  Future<bool> sendForgotPasswordLetter(
+      String userEmail, String resetLink) async {
     final message = Message()
       ..from = const Address("9bc523879fc5fa@example.com", 'Todoshka')
       ..recipients.add(userEmail)
@@ -28,6 +29,7 @@ class MailTrapClient {
     try {
       final sendReport = await send(message, _smtpServer);
       Logger().i('Forgot Password email sent: $sendReport');
+      return true;
     } on MailerException catch (e) {
       Logger().e('Forgot Password email not sent. ${e.message}');
       for (var p in e.problems) {
@@ -36,5 +38,6 @@ class MailTrapClient {
     } on Exception catch (e) {
       Logger().e('Forgot Password email not sent. $e');
     }
+    return false;
   }
 }

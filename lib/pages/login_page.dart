@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 import 'package:todo_list/blocs/auth_bloc.dart';
 import 'package:todo_list/blocs/events/auth_events.dart';
@@ -48,9 +49,15 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void forgotPassword() {
-    MailTrapClient().sendForgotPasswordLetter(
+  void forgotPassword() async {
+    final sendingResult = await MailTrapClient().sendForgotPasswordLetter(
         "example@gmail.com", 'https://example.com/reset');
+    Fluttertoast.cancel();
+    if (sendingResult) {
+      Fluttertoast.showToast(msg: 'Password reset letter sent');
+    } else {
+      Fluttertoast.showToast(msg: 'Error sending message');
+    }
   }
 
   @override
