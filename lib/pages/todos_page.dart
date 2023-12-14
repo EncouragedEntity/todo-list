@@ -9,7 +9,6 @@ import 'package:todo_list/models/todo_item.dart';
 import 'package:todo_list/pages/add_edit_item_page.dart';
 
 import '../blocs/states/todo_state.dart';
-import '../widgets/todo/grouping_dialog.dart';
 import '../widgets/todo/todo_items_list.dart';
 
 class TodosPage extends StatefulWidget {
@@ -61,21 +60,7 @@ class _TodosPageState extends State<TodosPage> {
                       fixedSize:
                           const MaterialStatePropertyAll(Size.fromRadius(26)),
                     ),
-                    onPressed: () async {
-                      final result = await showDialog<bool>(
-                        context: context,
-                        builder: (ctx) {
-                          return GroupingDialog(groupByPriority);
-                        },
-                      );
-
-                      setState(() {
-                        groupByPriority = result ?? false;
-                      });
-
-                      // ignore: use_build_context_synchronously
-                      context.read<TodoBloc>().add(TodoLoadAllItemsEvent());
-                    },
+                    onPressed: () {},
                     icon: const Icon(
                       Ionicons.ellipsis_horizontal_outline,
                       color: Colors.white,
@@ -141,9 +126,7 @@ class _TodosPageState extends State<TodosPage> {
               ),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
-              body: TodoItemList(
-                groupByPriority: groupByPriority,
-              ),
+              body: const TodoItemList(),
               bottomNavigationBar: BottomNavigationBar(
                 items: const [
                   BottomNavigationBarItem(

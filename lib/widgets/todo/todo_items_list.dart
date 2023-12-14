@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
 import 'package:todo_list/blocs/events/todo_event.dart';
 import 'package:todo_list/blocs/states/todo_state.dart';
@@ -11,16 +12,16 @@ import '../../models/todo_item.dart';
 import '../../models/todo_priority.dart';
 
 class TodoItemList extends StatefulWidget {
-  const TodoItemList({Key? key, this.groupByPriority = false})
-      : super(key: key);
-
-  final bool groupByPriority;
+  const TodoItemList({Key? key}) : super(key: key);
 
   @override
   State<TodoItemList> createState() => _TodoItemListState();
 }
 
 class _TodoItemListState extends State<TodoItemList> {
+  bool groupByPriority = false;
+  final sortingButtonKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     if (context.watch<TodoBloc>().state is! TodoItemsLoadedState) {
@@ -35,12 +36,12 @@ class _TodoItemListState extends State<TodoItemList> {
         }
         if (todoState is TodoItemsLoadedState) {
           Logger().i(todoState.items);
-          final groupedItems = widget.groupByPriority
+          final groupedItems = groupByPriority
               ? _groupItemsByPriority(todoState.items)
               : _groupItemsByDate(todoState.items);
 
           return Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: RefreshIndicator(
               onRefresh: () async {
                 context.read<TodoBloc>().add(TodoLoadAllItemsEvent());
@@ -59,7 +60,7 @@ class _TodoItemListState extends State<TodoItemList> {
                   return index1.compareTo(index2);
                 },
                 itemComparator: (item1, item2) {
-                  if (widget.groupByPriority) {
+                  if (groupByPriority) {
                     return item1['priority'].compareTo(item2['priority']);
                   } else {
                     final dueDate1 = item1['dueDate'] as DateTime?;
@@ -74,16 +75,103 @@ class _TodoItemListState extends State<TodoItemList> {
                     }
                   }
                 },
-                groupSeparatorBuilder: (dynamic value) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    value.toString(),
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayMedium!
-                        .copyWith(fontSize: 16),
-                  ),
-                ),
+                groupSeparatorBuilder: (dynamic value) {
+                  if (value.toString() == 'Today' ||
+                      value.toString() == 'High Priority') {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            value.toString(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(fontSize: 16),
+                          ),
+                          ElevatedButton.icon(
+                            key: sortingButtonKey,
+                            onPressed: () async {
+                              RenderBox renderbox = sortingButtonKey
+                                  .currentContext!
+                                  .findRenderObject() as RenderBox;
+                              final RenderBox overlay = Overlay.of(context)
+                                  .context
+                                  .findRenderObject() as RenderBox;
+                              final RelativeRect position =
+                                  RelativeRect.fromRect(
+                                Rect.fromPoints(
+                                  renderbox.localToGlobal(Offset.zero,
+                                      ancestor: overlay),
+                                  renderbox.localToGlobal(
+                                      renderbox.size.bottomRight(Offset.zero),
+                                      ancestor: overlay),
+                                ),
+                                Offset.zero & overlay.size,
+                              );
+
+                              final result = await showMenu<bool>(
+                                context: context,
+                                position: position,
+                                items: [
+                                  PopupMenuItem(
+                                    onTap: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                    child: ListTile(
+                                      leading: Icon(
+                                        Ionicons.calendar_number_outline,
+                                        color: Theme.of(context).highlightColor,
+                                      ),
+                                      title: const Text('Due Date'),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    onTap: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                    child: ListTile(
+                                      leading: Icon(
+                                        Ionicons.warning_outline,
+                                        color: Theme.of(context).highlightColor,
+                                      ),
+                                      title: const Text('Priority'),
+                                    ),
+                                  )
+                                ],
+                              );
+                              if (groupByPriority != result) {
+                                setState(() {
+                                  groupByPriority = result ?? false;
+                                });
+
+                                // ignore: use_build_context_synchronously
+                                context
+                                    .read<TodoBloc>()
+                                    .add(TodoLoadAllItemsEvent());
+                              }
+                            },
+                            icon: const Icon(Ionicons.swap_vertical_outline),
+                            label: Text(value.toString() == 'Today'
+                                ? 'Date'
+                                : 'Priority'),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      value.toString(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayMedium!
+                          .copyWith(fontSize: 16),
+                    ),
+                  );
+                },
                 itemBuilder: (context, element) {
                   final items = element['items'] as List<TodoItem>?;
                   if (items != null && items.isNotEmpty) {
