@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:todo_list/models/todo_item.dart';
 import 'package:todo_list/models/todo_priority.dart';
+import 'package:todo_list/widgets/styled_text_form_field.dart';
 
 class AddEditItemPage extends StatefulWidget {
   const AddEditItemPage({
@@ -32,6 +33,8 @@ class _AddEditItemPageState extends State<AddEditItemPage> {
     }
   }
 
+  final priorityButtonKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -60,16 +63,13 @@ class _AddEditItemPageState extends State<AddEditItemPage> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: TextField(
-              style: Theme.of(context).textTheme.bodySmall,
-              autofocus: true,
+            child: StyledTextFormField(
               controller: _titleController,
             ),
           ),
           const SizedBox(
             height: 50,
           ),
-          const Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.max,
@@ -110,49 +110,56 @@ class _AddEditItemPageState extends State<AddEditItemPage> {
                     width: 32,
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         'Priority',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      Elevated(
-                        hint: const Text('Priority'),
-                        items: [],
-                        onChanged: (value) {
-                          setState(() {
-                            item.priority = value ?? TodoPriority.medium;
-                            selectedPriority = item.priority;
-                          });
-                        },
-                        value: item.priority,
-                        icon: Icon(
-                          Ionicons.warning_outline,
-                          color: currentPriorityColor,
-                        ),
-                      ),
                       ElevatedButton.icon(
+                        key: priorityButtonKey,
                         onPressed: () {
-                          setState(() {
-                            showMenu(
-                                context: context,
-                                position: RelativeRect(),
-                                items: [
-                                  ...TodoPriority.values
-                                      .map((e) => DropdownButton(
-                                            value: e,
-                                            child: Text(e.name),
-                                          ))
-                                ]);
-                            item.priority = value ?? TodoPriority.medium;
-                            selectedPriority = item.priority;
-                          });
+                          RenderBox renderbox = priorityButtonKey
+                              .currentContext!
+                              .findRenderObject() as RenderBox;
+                          final RenderBox overlay = Overlay.of(context)
+                              .context
+                              .findRenderObject() as RenderBox;
+                          final RelativeRect position = RelativeRect.fromRect(
+                            Rect.fromPoints(
+                              renderbox.localToGlobal(Offset.zero,
+                                  ancestor: overlay),
+                              renderbox.localToGlobal(
+                                  renderbox.size.bottomRight(Offset.zero),
+                                  ancestor: overlay),
+                            ),
+                            Offset.zero & overlay.size,
+                          );
+
+                          showMenu<TodoPriority>(
+                            context: context,
+                            position: position,
+                            items: [
+                              ...TodoPriority.values.map((e) => PopupMenuItem(
+                                    onTap: () {
+                                      setState(() {
+                                        item.priority = e;
+                                        selectedPriority = item.priority;
+                                      });
+                                    },
+                                    value: e,
+                                    child: Text(e.name),
+                                  ))
+                            ],
+                          );
                         },
                         icon: Icon(
                           Ionicons.warning_outline,
                           color: currentPriorityColor,
                         ),
-                        label: Text(item.priority.name),
+                        label: Text(
+                          item.priority.name,
+                        ),
                       ),
                     ],
                   ),
@@ -160,23 +167,32 @@ class _AddEditItemPageState extends State<AddEditItemPage> {
               ),
             ],
           ),
-          ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(
-                Theme.of(context).highlightColor,
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(
+                  Theme.of(context).highlightColor,
+                ),
+                foregroundColor: const MaterialStatePropertyAll(
+                  Colors.white,
+                ),
+                minimumSize:
+                    MaterialStateProperty.all(const Size(double.infinity, 54)),
               ),
-              foregroundColor: const MaterialStatePropertyAll(
-                Colors.white,
+              onPressed: () {
+                item.title = _titleController.text.isEmpty
+                    ? "New task"
+                    : _titleController.text;
+
+                Navigator.of(context).pop(item);
+              },
+              child: const Text(
+                "Save",
+                style: TextStyle(fontSize: 18),
               ),
             ),
-            onPressed: () {
-              item.title = _titleController.text.isEmpty
-                  ? "New task"
-                  : _titleController.text;
-
-              Navigator.of(context).pop(item);
-            },
-            child: const Text("Save"),
           ),
         ],
       ),
