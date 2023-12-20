@@ -1,0 +1,4 @@
+flutter_launcher_icons:
+  android: "launcher_icon"
+  image_path: "assets/logo.png"
+  background_color: "#666AF6"
