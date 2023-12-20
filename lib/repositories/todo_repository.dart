@@ -1,5 +1,6 @@
-import 'package:todo_list/models/todo_item.dart';
 import 'package:todo_list/providers/todo/todo_provider.dart';
+
+import '../models/todo/todo_item.dart';
 
 class TodoRepository {
   final TodoProvider todoProvider;
@@ -18,7 +19,11 @@ class TodoRepository {
     return await todoProvider.getAll();
   }
 
-  Future<TodoItem> getById(String id) async {
+  Future<List<TodoItem>> getAllByTitle(String title) async {
+    return await todoProvider.getAllByTitle(title);
+  }
+
+  Future<TodoItem?> getById(String id) async {
     return await todoProvider.getById(id);
   }
 

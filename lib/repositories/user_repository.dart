@@ -1,27 +1,39 @@
+import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:todo_list/providers/auth/auth_provider.dart';
+
+import '../models/auth/user.dart';
 
 class UserRepository {
   final AuthProvider authProvider;
 
   UserRepository(this.authProvider);
 
-  Future<bool> changePassword(String oldPassword, String newPassword) async {
-    return await authProvider.changePassword(oldPassword, newPassword);
+  Future<User?> changePassword(String oldPassword, String newPassword) async {
+    final newUser = await authProvider.changePassword(oldPassword, newPassword);
+    await SessionManager().set('currentUser', newUser);
+    return newUser;
   }
 
   Future<bool> deleteAccount() async {
+    await SessionManager().remove('currentUser');
     return await authProvider.deleteAccount();
   }
 
-  Future<bool> logIn(String email, String password) async {
-    return await authProvider.logIn(email, password);
+  Future<User?> logIn(String email, String password) async {
+    final user = await authProvider.logIn(email, password);
+    if (user != null) {
+      await SessionManager().set('currentUser', user);
+      return user;
+    }
+    return null;
   }
 
   Future<bool> logOut() async {
+    await SessionManager().remove('currentUser');
     return await authProvider.logOut();
   }
 
-  Future<bool> signUp(String email, String password) async {
+  Future<User?> signUp(String email, String password) async {
     return await authProvider.signUp(email, password);
   }
 }

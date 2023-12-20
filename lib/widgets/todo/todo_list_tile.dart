@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
 import 'package:todo_list/blocs/todo_bloc.dart';
-import 'package:todo_list/models/todo_item.dart';
+import 'package:todo_list/models/todo/todo_item.dart';
 
 import '../../blocs/events/todo_event.dart';
+import '../../pages/add_edit_item_page.dart';
 
 class TodoItemListTile extends StatefulWidget {
   const TodoItemListTile({super.key, required this.item});
@@ -62,7 +63,24 @@ class _TodoItemListTileState extends State<TodoItemListTile> {
             ),
             child: ListTile(
               enabled: !isChecked,
-              onTap: () {
+              onTap: () async {
+                TodoItem? item = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) {
+                      return AddEditItemPage(item: widget.item);
+                    },
+                  ),
+                );
+
+                if (item != null) {
+                  // ignore: use_build_context_synchronously
+                  context.read<TodoBloc>().add(
+                        TodoUpdateItemEvent(widget.item.id!, item),
+                      );
+
+                  // ignore: use_build_context_synchronously
+                  context.read<TodoBloc>().add(TodoLoadAllItemsEvent());
+                }
                 Logger().i("Tile was tapped");
               },
               focusColor: Colors.transparent,
@@ -85,6 +103,10 @@ class _TodoItemListTileState extends State<TodoItemListTile> {
                       isChecked = newValue ?? false;
                       widget.item.isDone = isChecked;
                     });
+
+                    context
+                        .read<TodoBloc>()
+                        .add(TodoUpdateItemEvent(widget.item.id!, widget.item));
                   },
                 ),
               ),

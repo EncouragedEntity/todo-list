@@ -11,7 +11,9 @@ import 'package:todo_list/widgets/auth/password_text_field.dart';
 import '../services/mailtrap_client.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.message, this.isLoginMode = true});
+  final String? message;
+  final bool? isLoginMode;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -29,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    isLoginMode = widget.isLoginMode ?? true;
   }
 
   void logIn() {
@@ -58,6 +61,13 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       Fluttertoast.showToast(msg: 'Error sending message');
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override

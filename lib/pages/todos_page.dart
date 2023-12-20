@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_list/blocs/auth_bloc.dart';
+import 'package:todo_list/blocs/events/auth_events.dart';
 import 'package:todo_list/blocs/events/todo_event.dart';
 import 'package:todo_list/blocs/todo_bloc.dart';
-import 'package:todo_list/models/todo_item.dart';
 import 'package:todo_list/pages/add_edit_item_page.dart';
 
 import '../blocs/states/todo_state.dart';
+import '../models/todo/todo_item.dart';
 import '../widgets/todo/todo_items_list.dart';
 
 class TodosPage extends StatefulWidget {
@@ -19,36 +21,99 @@ class TodosPage extends StatefulWidget {
 }
 
 class _TodosPageState extends State<TodosPage> {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
   bool groupByPriority = false;
+  final TextEditingController _searchController = TextEditingController();
+  bool isSearchBarNotEmpty = false;
+
   @override
   Widget build(BuildContext context) {
     return Provider<TodoBloc>(
       create: (ctx) => TodoBloc(),
       builder: (ctx, child) => SafeArea(
         child: BlocBuilder<TodoBloc, TodoState>(
-          builder: (context, state) {
+          builder: (buildCtx, state) {
             return Scaffold(
+              key: _key,
+              drawer: Drawer(
+                child: Column(
+                  children: [
+                    Text(
+                      'Todooshka',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () async {
+                        _key.currentState!.closeDrawer();
+                        context.read<AuthBloc>().add(AuthLogoutEvent());
+                        await Future.delayed(Duration.zero);
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).popAndPushNamed('/');
+                      },
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
+              ),
               appBar: AppBar(
                 centerTitle: true,
                 toolbarHeight: 90,
                 leading: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _key.currentState!.openDrawer();
+                  },
                   icon: const Icon(
-                    Ionicons.grid_outline,
+                    Ionicons.menu_outline,
                     color: Colors.white,
                     size: 26,
                   ),
                 ),
-                title: const SizedBox(
+                title: SizedBox(
                   width: 230,
                   child: SearchBar(
-                    elevation: MaterialStatePropertyAll(0),
-                    leading: Icon(
+                    elevation: const MaterialStatePropertyAll(0),
+                    leading: const Icon(
                       Icons.search,
                       color: Colors.grey,
                       size: 20,
                     ),
-                    constraints: BoxConstraints(minHeight: 36, maxHeight: 36),
+                    constraints:
+                        const BoxConstraints(minHeight: 36, maxHeight: 36),
+                    controller: _searchController,
+                    onSubmitted: (value) {
+                      ctx.read<TodoBloc>().add(TodoLoadAllItemsByTitleEvent(
+                          itemTitle: _searchController.text));
+                    },
+                    onChanged: (value) {
+                      setState(() {
+                        if (value.isNotEmpty) {
+                          isSearchBarNotEmpty = true;
+                          return;
+                        }
+                        isSearchBarNotEmpty = false;
+                      });
+                    },
+                    trailing: isSearchBarNotEmpty
+                        ? [
+                            IconButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  isSearchBarNotEmpty = false;
+                                });
+                                ctx
+                                    .read<TodoBloc>()
+                                    .add(TodoLoadAllItemsEvent());
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.grey,
+                                size: 20,
+                              ),
+                            )
+                          ]
+                        : null,
                   ),
                 ),
                 actions: [
@@ -107,7 +172,7 @@ class _TodosPageState extends State<TodosPage> {
                 onPressed: () async {
                   TodoItem? item = await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (ctx) {
+                      builder: (routeCtx) {
                         return const AddEditItemPage();
                       },
                     ),
@@ -115,7 +180,7 @@ class _TodosPageState extends State<TodosPage> {
 
                   if (item != null) {
                     // ignore: use_build_context_synchronously
-                    context.read<TodoBloc>().add(TodoAddNewItemEvent(item));
+                    ctx.read<TodoBloc>().add(TodoAddNewItemEvent(item));
                   }
                 },
                 icon: const Icon(
@@ -126,7 +191,23 @@ class _TodosPageState extends State<TodosPage> {
               ),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
-              body: const TodoItemList(),
+              body: RefreshIndicator(
+                  onRefresh: () async {
+                    ctx.read<TodoBloc>().add(TodoLoadAllItemsByTitleEvent(
+                        itemTitle: _searchController.text));
+                  },
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 500,
+                          child: TodoItemList(
+                            itemTitle: _searchController.text,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
               bottomNavigationBar: BottomNavigationBar(
                 items: const [
                   BottomNavigationBarItem(

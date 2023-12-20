@@ -1,7 +1,9 @@
+import 'package:todo_list/models/auth/user.dart';
+
 abstract class AuthProvider {
-  Future<bool> logIn(String email, String password);
-  Future<bool> signUp(String email, String password);
+  Future<User?> logIn(String email, String password);
+  Future<User?> signUp(String email, String password);
   Future<bool> logOut();
-  Future<bool> changePassword(String oldPassword, String newPassword);
+  Future<User?> changePassword(String oldPassword, String newPassword);
   Future<bool> deleteAccount();
 }

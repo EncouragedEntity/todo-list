@@ -1,31 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_list/blocs/auth_bloc.dart';
-import 'package:todo_list/blocs/todo_bloc.dart';
-import 'package:todo_list/home_page.dart';
-import 'package:todo_list/theme.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:todo_list/app_widget.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgets = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgets);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.light,
-      theme: appTheme,
-      home: MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthBloc>(
-            create: (BuildContext ctx) => AuthBloc(),
-          ),
-          BlocProvider<TodoBloc>(
-            create: (BuildContext ctx) => TodoBloc(),
-          ),
-        ],
-        child: const HomePage(),
-      ),
-    ),
-  );
+  runApp(const AppWidget());
+  FlutterNativeSplash.remove();
 }

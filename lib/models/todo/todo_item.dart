@@ -1,11 +1,14 @@
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:todo_list/models/todo_priority.dart';
+import 'package:todo_list/models/todo/todo_priority.dart';
 import 'package:uuid/uuid.dart';
+
+part 'todo_item.g.dart';
 
 @JsonSerializable()
 class TodoItem {
   String? id;
+  String authorId;
   String title;
   bool isDone;
   DateTime dueDate;
@@ -17,6 +20,7 @@ class TodoItem {
     this.isDone = false,
     this.priority = TodoPriority.medium,
     required this.dueDate,
+    this.authorId = '',
   }) {
     if (id == null) {
       this.id = const Uuid().v4();
@@ -30,4 +34,9 @@ class TodoItem {
   String get formattedDate {
     return DateFormat('dd.MM.yyyy').format(dueDate);
   }
+
+  factory TodoItem.fromJson(Map<String, dynamic> json) =>
+      _$TodoItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TodoItemToJson(this);
 }

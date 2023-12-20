@@ -1,17 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list/blocs/events/todo_event.dart';
 import 'package:todo_list/blocs/states/todo_state.dart';
-import 'package:todo_list/providers/todo/todo_mock_provider.dart';
+import 'package:todo_list/providers/todo/todo_item_local_provider.dart';
 import 'package:todo_list/repositories/todo_repository.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  //TODO Change to normal provider
-  final repository = TodoRepository(TodoMockProvider());
+  final repository = TodoRepository(TodoItemLocalProvider());
 
   TodoBloc() : super(TodoLoadingState()) {
     on<TodoLoadAllItemsEvent>((event, emit) async {
       emit(TodoLoadingState());
       final itemList = await repository.getAll();
+      emit(TodoItemsLoadedState(itemList));
+    });
+
+    on<TodoLoadAllItemsByTitleEvent>((event, emit) async {
+      emit(TodoLoadingState());
+      final itemList = await repository.getAllByTitle(event.itemTitle);
       emit(TodoItemsLoadedState(itemList));
     });
 
@@ -25,10 +30,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
     on<TodoUpdateItemEvent>((event, emit) async {
       final item = event.item;
-      emit(TodoLoadingState());
-      await repository.update(item.id!, item);
-      final itemList = await repository.getAll();
-      emit(TodoItemsLoadedState(itemList));
+      final id = event.idOfItemToUpdate;
+      await repository.update(id, item);
     });
 
     on<TodoRemoveItemEvent>((event, emit) async {

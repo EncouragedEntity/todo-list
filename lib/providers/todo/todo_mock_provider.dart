@@ -1,7 +1,7 @@
-import 'package:todo_list/models/todo_item.dart';
 import 'package:todo_list/providers/todo/todo_provider.dart';
 
-import '../../models/todo_priority.dart';
+import '../../models/todo/todo_item.dart';
+import '../../models/todo/todo_priority.dart';
 
 class TodoMockProvider extends TodoProvider {
   @override
@@ -48,49 +48,65 @@ class TodoMockProvider extends TodoProvider {
       title: 'Complete Flutter project',
       dueDate: DateTime.now(),
       priority: TodoPriority.high,
+      authorId: '',
     ),
     TodoItem(
       title: 'Read a book',
       dueDate: DateTime.now().add(const Duration(days: 1)),
       priority: TodoPriority.low,
+      authorId: '',
     ),
     TodoItem(
       title: 'Write blog post',
       dueDate: DateTime.now().add(const Duration(days: 2)),
       priority: TodoPriority.high,
+      authorId: '',
     ),
     TodoItem(
       title: 'Exercise',
       dueDate: DateTime.now().add(const Duration(days: 3)),
       priority: TodoPriority.medium,
+      authorId: '',
     ),
     TodoItem(
       title: 'Learn a new programming language',
       dueDate: DateTime.now().add(const Duration(days: 1)),
       priority: TodoPriority.low,
+      authorId: '',
     ),
     TodoItem(
       title: 'Attend team meeting',
       dueDate: DateTime.now().add(const Duration(days: 4)),
       priority: TodoPriority.low,
+      authorId: '',
     ),
     TodoItem(
       title: 'Prepare for exam',
       dueDate: DateTime.now().add(const Duration(days: 6)),
       priority: TodoPriority.low,
+      authorId: '',
     ),
     TodoItem(
       title: 'Cook a new recipe',
       dueDate: DateTime.now().add(const Duration(days: 2)),
+      authorId: '',
     ),
     TodoItem(
       title: 'Plan weekend getaway',
       dueDate: DateTime.now().add(const Duration(days: 8)),
+      authorId: '',
     ),
     TodoItem(
       title: 'Complete GPT-3 tutorial',
       dueDate: DateTime.now(),
       priority: TodoPriority.high,
+      authorId: '',
     ),
   ];
+
+  @override
+  Future<List<TodoItem>> getAllByTitle(String title) {
+    // TODO: implement getAllByTitle
+    throw UnimplementedError();
+  }
 }

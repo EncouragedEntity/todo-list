@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:todo_list/models/todo_item.dart';
-import 'package:todo_list/models/todo_priority.dart';
+import 'package:todo_list/models/todo/todo_item.dart';
+import 'package:todo_list/models/todo/todo_priority.dart';
 import 'package:todo_list/widgets/styled_text_form_field.dart';
 
 class AddEditItemPage extends StatefulWidget {
@@ -19,7 +19,7 @@ class AddEditItemPage extends StatefulWidget {
 class _AddEditItemPageState extends State<AddEditItemPage> {
   final TextEditingController _titleController = TextEditingController();
   late final TodoItem item;
-  TodoPriority selectedPriority = TodoPriority.medium;
+  late TodoPriority selectedPriority;
   Color get currentPriorityColor {
     switch (selectedPriority) {
       case TodoPriority.high:
@@ -44,6 +44,7 @@ class _AddEditItemPageState extends State<AddEditItemPage> {
           title: "New task",
           dueDate: DateTime.now().add(const Duration(days: 1)),
         );
+    selectedPriority = item.priority;
   }
 
   @override
