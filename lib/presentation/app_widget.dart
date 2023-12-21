@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list/logic/blocs/auth_bloc.dart';
+import 'package:todo_list/logic/blocs/events/auth_events.dart';
 import 'package:todo_list/theme.dart';
 
 import 'home_page.dart';
@@ -15,6 +16,12 @@ class AppWidget extends StatefulWidget {
 
 class _AppWidgetState extends State<AppWidget> {
   final AuthBloc _authBloc = AuthBloc();
+  @override
+  void initState() {
+    super.initState();
+    _authBloc.add(const AuthAutomaticLoginEvent());
+  }
+
   @override
   void dispose() {
     _authBloc.close();

@@ -21,6 +21,10 @@ class AuthLoginEvent extends AuthLoggingEvent {
   const AuthLoginEvent(super.email, super.password);
 }
 
+class AuthAutomaticLoginEvent extends AuthEvent {
+  const AuthAutomaticLoginEvent();
+}
+
 class AuthSignUpEvent extends AuthLoggingEvent {
   const AuthSignUpEvent(super.email, super.password);
 }

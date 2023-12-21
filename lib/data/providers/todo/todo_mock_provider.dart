@@ -106,7 +106,6 @@ class TodoMockProvider extends TodoProvider {
 
   @override
   Future<List<TodoItem>> getAllByTitle(String title) {
-    // TODO: implement getAllByTitle
     throw UnimplementedError();
   }
 }

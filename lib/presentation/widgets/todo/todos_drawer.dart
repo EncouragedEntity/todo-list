@@ -30,7 +30,7 @@ class TodosDrawer extends StatelessWidget {
               onPressed: () async {
                 _key.currentState!.closeDrawer();
                 context.read<AuthBloc>().add(AuthLogoutEvent());
-                await Future.delayed(Duration.zero);
+                await Future.delayed(const Duration(milliseconds: 200));
                 // ignore: use_build_context_synchronously
                 Navigator.of(context).pushReplacementNamed('/');
               },
