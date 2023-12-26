@@ -104,7 +104,7 @@ class _TodoItemListState extends State<TodoItemList> {
                         final priorityOrder = [
                           'High Priority',
                           'Medium Priority',
-                          'Low Priority'
+                          'Low Priority',
                         ];
                         final index1 = priorityOrder.indexOf(group1);
                         final index2 = priorityOrder.indexOf(group2);
@@ -205,7 +205,46 @@ class _TodoItemListState extends State<TodoItemList> {
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              ...items.map((e) => TodoItemListTile(item: e)),
+                              ...items.map(
+                                (e) => Dismissible(
+                                  onDismissed: (direction) {
+                                    context
+                                        .read<TodoBloc>()
+                                        .add(TodoLoadAllItemsByTitleEvent(
+                                          itemTitle: widget.itemTitle,
+                                        ));
+                                  },
+                                  key: Key(e.id!),
+                                  direction: DismissDirection.endToStart,
+                                  background: const Padding(
+                                    padding: EdgeInsets.only(right: 10),
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: CircleAvatar(
+                                        maxRadius: 24,
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        child: Icon(
+                                          Ionicons.trash_outline,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  confirmDismiss:
+                                      (DismissDirection direction) async {
+                                    if (direction ==
+                                        DismissDirection.endToStart) {
+                                      context
+                                          .read<TodoBloc>()
+                                          .add(TodoRemoveItemEvent(e));
+                                      return true;
+                                    }
+
+                                    return false;
+                                  },
+                                  child: TodoItemListTile(item: e),
+                                ),
+                              ),
                             ],
                           );
                         }

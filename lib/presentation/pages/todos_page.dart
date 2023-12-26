@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_list/presentation/widgets/todo/todos_calendar_page.dart';
 
 import '../../logic/blocs/events/todo_event.dart';
 import '../../logic/blocs/states/todo_state.dart';
@@ -24,6 +25,8 @@ class _TodosPageState extends State<TodosPage> {
   bool groupByPriority = false;
   final TextEditingController _searchController = TextEditingController();
   bool isSearchBarNotEmpty = false;
+  int _currentIndex = 0;
+  final PageController _pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +130,7 @@ class _TodosPageState extends State<TodosPage> {
                             "Today, ${DateFormat('d MMMM').format(DateTime.now())}",
                           ),
                           Text(
-                            "My tasks",
+                            _currentIndex == 0 ? "My tasks" : "Calendar",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
@@ -170,34 +173,64 @@ class _TodosPageState extends State<TodosPage> {
               ),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
-              body: RefreshIndicator(
-                  onRefresh: () async {
-                    ctx.read<TodoBloc>().add(TodoLoadAllItemsByTitleEvent(
-                        itemTitle: _searchController.text));
-                  },
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 500,
-                          child: TodoItemList(
-                            itemTitle: _searchController.text,
+              body: PageView(
+                controller: _pageController,
+                children: [
+                  RefreshIndicator(
+                    onRefresh: () async {
+                      ctx.read<TodoBloc>().add(TodoLoadAllItemsByTitleEvent(
+                          itemTitle: _searchController.text));
+                    },
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: 500,
+                            child: TodoItemList(
+                              itemTitle: _searchController.text,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  )),
+                      ],
+                    ),
+                  ),
+                  const TodosCalendarPage(),
+                ],
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+              ),
               bottomNavigationBar: BottomNavigationBar(
-                items: const [
+                items: [
                   BottomNavigationBarItem(
-                    icon: Icon(Ionicons.list, size: 34),
+                    icon: const Icon(Ionicons.list, size: 34),
                     label: "",
+                    activeIcon: Icon(
+                      Ionicons.list,
+                      size: 34,
+                      color: Theme.of(context).highlightColor,
+                    ),
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Ionicons.calendar_clear_outline, size: 34),
+                    icon: const Icon(Ionicons.calendar_clear_outline, size: 34),
                     label: "",
+                    activeIcon: Icon(
+                      Ionicons.calendar_clear_outline,
+                      size: 34,
+                      color: Theme.of(context).highlightColor,
+                    ),
                   ),
                 ],
+                currentIndex: _currentIndex,
+                onTap: (index) {
+                  _pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
               ),
             );
           },
