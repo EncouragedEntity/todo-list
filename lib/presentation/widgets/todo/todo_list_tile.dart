@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
@@ -60,12 +62,10 @@ class _TodoItemListTileState extends State<TodoItemListTile> {
                 );
 
                 if (item != null) {
-                  // ignore: use_build_context_synchronously
                   context.read<TodoBloc>().add(
                         TodoUpdateItemEvent(widget.item.id!, item),
                       );
 
-                  // ignore: use_build_context_synchronously
                   context.read<TodoBloc>().add(TodoLoadAllItemsEvent());
                 }
                 Logger().i("Tile was tapped");
