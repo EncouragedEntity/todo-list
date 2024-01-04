@@ -184,28 +184,32 @@ class _AddEditItemPageState extends State<AddEditItemPage> {
           const Spacer(),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextButton(
-              style: ButtonStyle(
-                elevation: const MaterialStatePropertyAll(4),
-                backgroundColor: MaterialStatePropertyAll(
-                  Theme.of(context).highlightColor,
+            child: Material(
+              elevation: 4,
+              borderRadius: BorderRadius.circular(28),
+              child: TextButton(
+                style: ButtonStyle(
+                  elevation: const MaterialStatePropertyAll(4),
+                  backgroundColor: MaterialStatePropertyAll(
+                    Theme.of(context).highlightColor,
+                  ),
+                  foregroundColor: const MaterialStatePropertyAll(
+                    Colors.white,
+                  ),
+                  minimumSize: MaterialStateProperty.all(
+                      const Size(double.infinity, 54)),
                 ),
-                foregroundColor: const MaterialStatePropertyAll(
-                  Colors.white,
-                ),
-                minimumSize:
-                    MaterialStateProperty.all(const Size(double.infinity, 54)),
-              ),
-              onPressed: () {
-                item.title = _titleController.text.isEmpty
-                    ? "New task"
-                    : _titleController.text;
+                onPressed: () {
+                  item.title = _titleController.text.isEmpty
+                      ? "New task"
+                      : _titleController.text;
 
-                Navigator.of(context).pop(item);
-              },
-              child: const Text(
-                "Save",
-                style: TextStyle(fontSize: 18),
+                  Navigator.of(context).pop(item);
+                },
+                child: const Text(
+                  "Save",
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
             ),
           ),

@@ -145,31 +145,35 @@ class _TodosPageState extends State<TodosPage> {
                   ),
                 ),
               ),
-              floatingActionButton: IconButton(
-                style: ButtonStyle(
-                  elevation: const MaterialStatePropertyAll(4),
-                  backgroundColor: MaterialStatePropertyAll(
-                    Theme.of(context).highlightColor,
-                  ),
-                ),
-                onPressed: () async {
-                  TodoItem? item = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (routeCtx) {
-                        return const AddEditItemPage();
-                      },
+              floatingActionButton: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(30),
+                child: IconButton(
+                  style: ButtonStyle(
+                    elevation: const MaterialStatePropertyAll(4),
+                    backgroundColor: MaterialStatePropertyAll(
+                      Theme.of(context).highlightColor,
                     ),
-                  );
+                  ),
+                  onPressed: () async {
+                    TodoItem? item = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (routeCtx) {
+                          return const AddEditItemPage();
+                        },
+                      ),
+                    );
 
-                  if (item != null) {
-                    // ignore: use_build_context_synchronously
-                    ctx.read<TodoBloc>().add(TodoAddNewItemEvent(item));
-                  }
-                },
-                icon: const Icon(
-                  Icons.add,
-                  size: 40,
-                  color: Colors.white,
+                    if (item != null) {
+                      // ignore: use_build_context_synchronously
+                      ctx.read<TodoBloc>().add(TodoAddNewItemEvent(item));
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    size: 40,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               floatingActionButtonLocation:
