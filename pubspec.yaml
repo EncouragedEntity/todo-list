@@ -82,6 +82,7 @@ flutter:
   assets:
     - assets/icon_square.png
     - assets/logo.png
+    - assets/empty_calendar.png
 
 
   # To add assets to your application, add an assets section, like this:

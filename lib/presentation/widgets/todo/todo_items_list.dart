@@ -95,7 +95,7 @@ class _TodoItemListState extends State<TodoItemList> {
                   TodoLoadAllItemsByTitleEvent(itemTitle: widget.itemTitle));
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: todoState.items.isNotEmpty
                   ? GroupedListView<dynamic, dynamic>(
                       elements: groupedItems,
@@ -143,6 +143,9 @@ class _TodoItemListState extends State<TodoItemList> {
                                 ),
                                 ElevatedButton.icon(
                                   key: sortingButtonKey,
+                                  style: ButtonStyle(
+                                      foregroundColor: MaterialStatePropertyAll(
+                                          Theme.of(context).highlightColor)),
                                   onPressed: () async {
                                     RenderBox renderbox = sortingButtonKey
                                         .currentContext!

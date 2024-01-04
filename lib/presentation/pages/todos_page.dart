@@ -102,7 +102,7 @@ class _TodosPageState extends State<TodosPage> {
                   IconButton.filled(
                     style: ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll(
-                        Theme.of(context).primaryColor.withOpacity(0.4),
+                        Theme.of(context).primaryColor,
                       ),
                       fixedSize:
                           const MaterialStatePropertyAll(Size.fromRadius(26)),
@@ -116,7 +116,7 @@ class _TodosPageState extends State<TodosPage> {
                   ),
                 ],
                 backgroundColor:
-                    Theme.of(context).highlightColor.withOpacity(0.70),
+                    Theme.of(context).highlightColor.withOpacity(0.84),
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(72),
                   child: Padding(
@@ -147,6 +147,7 @@ class _TodosPageState extends State<TodosPage> {
               ),
               floatingActionButton: IconButton(
                 style: ButtonStyle(
+                  elevation: const MaterialStatePropertyAll(4),
                   backgroundColor: MaterialStatePropertyAll(
                     Theme.of(context).highlightColor,
                   ),

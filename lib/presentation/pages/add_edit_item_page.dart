@@ -90,11 +90,23 @@ class _AddEditItemPageState extends State<AddEditItemPage> {
                         label: Text(item.formattedDate),
                         onPressed: () async {
                           final chosenDate = await showDatePicker(
+                            builder: (BuildContext context, Widget? child) {
+                              return Theme(
+                                data: ThemeData.light(useMaterial3: true)
+                                    .copyWith(
+                                        colorScheme: ColorScheme.fromSeed(
+                                            seedColor: Theme.of(context)
+                                                .highlightColor
+                                                .withOpacity(0.20))),
+                                child: child!,
+                              );
+                            },
                             context: context,
-                            firstDate: DateTime.now(),
+                            firstDate: DateTime.now()
+                                .copyWith(year: DateTime.now().year - 1),
                             initialDate: item.dueDate,
-                            lastDate:
-                                DateTime.now().add(const Duration(days: 365)),
+                            lastDate: DateTime.now()
+                                .copyWith(year: DateTime.now().year + 1),
                           );
                           setState(() {
                             item.dueDate = chosenDate ??
@@ -174,6 +186,7 @@ class _AddEditItemPageState extends State<AddEditItemPage> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
               style: ButtonStyle(
+                elevation: const MaterialStatePropertyAll(4),
                 backgroundColor: MaterialStatePropertyAll(
                   Theme.of(context).highlightColor,
                 ),

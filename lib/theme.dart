@@ -24,7 +24,7 @@ final appTheme = ThemeData(
       fontSize: 24,
     ),
     displaySmall: GoogleFonts.poppins(
-      color: const Color(0xFF6600FF),
+      color: const Color(0xFF878AF5),
       fontSize: 16,
     ),
     displayLarge: GoogleFonts.poppins(
@@ -34,6 +34,6 @@ final appTheme = ThemeData(
     ),
   ),
   scaffoldBackgroundColor: const Color(0xFFe3e4f8),
-  primaryColor: const Color(0xFF9FA1F7),
-  highlightColor: const Color(0xFF6600FF),
+  primaryColor: const Color(0xFF878AF5),
+  highlightColor: const Color(0xFF666AF6),
 );
